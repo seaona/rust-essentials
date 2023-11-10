@@ -1,9 +1,10 @@
 # Rust Essentials
-## Basic Commands
+## 1. Getting Started
+### Basic Commands
 - Compile a file: `rustc <<FILE_NAME>>`
 - Run: `./<<FILE_NAME>>`
 
-## Cargo
+### Cargo
 It's Rust's build system and package manager. Main commands:
 1. Creating a project with CARGO
     `cargo new hello_cargo`
@@ -35,7 +36,6 @@ Cargo.toml
 - `Cargo.lock`: keeps track of the exact versions of dependencies in your project
 - `src`: where your source program goes
 
-## Programming
 ### hello_world
 ```
 fn main() {
@@ -45,7 +45,7 @@ fn main() {
 - **Main function**: it's always the first code that runs in every executable of a Rust program
 - **Macro**: they don't always follow the same rules as functions. They are called using `!`
 
-### guessing_game
+## 2. Guessing Game
 - `use std::io`: uses the `io` input/output library into scope. The `io` library comes from the standard library, `std`. By default, a set of items from the standard library come on every program (the **prelude**). If it's not there, you need to bring it into the scope explicitly with a `use` statement.
 - `let mut guess = String::new()`:
     - we use `let` to create a variable.
@@ -66,3 +66,50 @@ fn main() {
 - `let guess: u32 = guess.trim().parse().expect("Please type a number!");` Rust allows us to shadow the previous value of guess with a new one. The trim will eliminate any whitespace at the beginning and end, which we must do to be able to compare the string to the u32, which can only contain numerical data. The user must press enter to satisfy the `read_line`, which adds a newline character to the string i.e. `5\n`. The trim method eliminates `\n`. The `parse()` method converts the string to another type. `u32` is unsigned 32-bit integer
 - `loop {}` creates an infinite loop. Adding `break` makes the program exit the loop.
 - `Err(_)` the underscore is a catch-all value, no matter what information they have inside.
+
+## 3. Common Programming Concepts
+### Variables and Mutability
+- You declare variables using `let`
+- By default variables are immutable, but adding `mut` in front of the variable name makes it mutable
+
+#### Constants
+- You declare constants using `const` and the type of value must be annotated.
+- Constants values that are bound to a name and are not allowed to change
+- You are not allowed to use `mut` with constants, they are always immutable
+- Constants can be declared in any scope, including global scope
+- Constants may be set only to a constant expression, not the result of a value that could only be computed at runtime
+- Constants naming convention is to use uppercase and underscores
+
+```
+const THREE_HOURS_IN_SECONDS_: u32 = 60 * 60 * 3;
+```
+- The compiler is able to evaluate a limited set of operations at compile time, which lets us choose to write out this value in a way that’s easier to understand and verify, rather than setting this constant to the value 10,800.
+
+#### Shadowing
+- Happens when using the same variable's name and repeating the use of the `let` keyword
+- It's different from reassigning a value, because we use `let` again
+- We can change the type of the value but reuse the same name
+
+```
+    let spaces = "   ";
+    let spaces = spaces.len();
+```
+
+### Data Types
+- Rust is a statically typed languange. It must know the types of all variables at compile time
+```
+let guess: u32 = "42".parse().expect("Not a number");
+```
+
+#### Scalar Types
+- A scalar type represents a single value. They are 4 types
+    - **Integer Types**: a number without a fractional component. Each variable can be signed and unsigned and has an explicit size. It uses the two's complement representation (uses the binary digit with the greatest place value as the sign to indicate whether the binary number is positive or negative. When the most significant bit is 1, the number is signed as negative).
+    If there is an overflow, in debug mode, Rust will panick, but in release mode, the value will wrap around to the minimum value
+    - **Floating-point Types**: all floating points are signed. There are two types `f32` and `f64` (most commonly used)
+    - **Boolean Types**: they are one byte size
+    - **Characters Types**: the language most primitive alphabetic type. We specify char literals with single quotes, as opposed to string literals, which use double quotes. It is four bytes in size and represents a Unicode Scalar Value (can represent way more than just ASCII)
+
+#### Compound Types
+- They can group multiple values into one type
+    - **Tuple Type**: they have a fixed length, once declared cannot grow in size. We can use pattern matching to destructure a tuple. The tuple without any value is called unit.
+    - **Array Type**: unlike tuples, every element of an array must have the same type. Arrays have a fixed length. Arrays are useful when you want your data allocated on the stack rather than the heap. A **vector** is similar type provided by the standard library, but it is allowed to grow in size.
