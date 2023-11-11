@@ -112,4 +112,19 @@ let guess: u32 = "42".parse().expect("Not a number");
 #### Compound Types
 - They can group multiple values into one type
     - **Tuple Type**: they have a fixed length, once declared cannot grow in size. We can use pattern matching to destructure a tuple. The tuple without any value is called unit.
-    - **Array Type**: unlike tuples, every element of an array must have the same type. Arrays have a fixed length. Arrays are useful when you want your data allocated on the stack rather than the heap. A **vector** is similar type provided by the standard library, but it is allowed to grow in size.
+    - **Array Type**: unlike tuples, every element of an array must have the same type. Arrays have a fixed length. Arrays are useful when you want your data allocated on the stack rather than the heap. A **vector** is similar type provided by the standard library, but it is allowed to grow in size. An array is a single chunk of memory of a known, fixed size that can be allocated on the stack. You can access elements of an array using indexing.
+    When you attempt to access an element using indexing, Rust will check that the index you’ve specified is less than the array length. If the index is greater than or equal to the length, Rust will panic. This check has to happen at runtime. This is an example of Rust’s memory safety principles in action.
+
+### Functions
+- Rust code uses **snake case** for functions and variable names: all letters are lowercase and underscodres separate words
+- To define a function we use `fn`
+- It does not matter the order of the functions, only that they are defined somewhere in a cope that can be seen by the caller
+- They can have **parameters**, special variables that are part of the function signature
+- The concrete values you provide for those parameters are called `arguments`
+- In function signatures, you must declare the type of each parameter
+
+#### Statements and Expressions
+- **Statements**: are instructions that perform some action and do not return a value. `let y = 6;`. Function definitions are also statements. Statements do no return values.
+- **Expressions**: evaluate to a resultant value. Calling a function or a macro is an expression, as well as a new scope block created with curly brackets. Expressions do not include ending semicolons.If you add a semicolon to the end of an expression, you turn it into a statement, and it will then not return a value.
+
+#### Functions with Return Values

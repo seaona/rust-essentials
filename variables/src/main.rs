@@ -1,3 +1,5 @@
+use std::io;
+
 fn main() {
     // mutable variables
     let mut x = 5;
@@ -59,5 +61,25 @@ fn main() {
     // array
     let arr_1 = [1, 2, 3, 4, 5];
     let arr_2: [i32; 5] = [1, 2, 3, 4, 5];
+    let arr_3 = [3; 5]; // [3, 3, 3, 3, 3]
+
+    let first = arr_1[0];
+    let second = arr_1[1];
+
+    println!("Please enter an array index.");
+    let mut index = String::new();
+
+    io::stdin()
+        .read_line(&mut index)
+        .expect("Failed to read line");
+
+    let index: usize = index
+        .trim()
+        .parse()
+        .expect("Index entered was not a number");
+
+    let element = arr_1[index];
+
+    println!("The value of the element at index {index} is: {element}");
 
 }
