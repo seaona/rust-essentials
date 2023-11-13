@@ -128,3 +128,30 @@ let guess: u32 = "42".parse().expect("Not a number");
 - **Expressions**: evaluate to a resultant value. Calling a function or a macro is an expression, as well as a new scope block created with curly brackets. Expressions do not include ending semicolons.If you add a semicolon to the end of an expression, you turn it into a statement, and it will then not return a value.
 
 #### Functions with Return Values
+- we don't name return values
+- the return value is the value of the final expression in the block of the body function
+- for returning early, we use `return` and specify a value
+
+```
+fn five() -> i32 {
+    5
+}
+```
+- there's no semicolon because it's an expression whose value we want to return
+- if we add a semicolon, we transform it from a expression to a statement, and we get an error
+
+### Comments
+- Use `//`
+
+### Control Flow
+#### if Expressions
+- Allows you to branch the code depending on conditions
+- We must provide with a Boolean as its condition
+- Rust only executers the block for the first `true` condition, and once it finds one, it doesn't even check the rest
+- This means the values that have the potential to be results from each arm of the if must be the same type. Rust needs to know at compile time what type the number variable is. So this will throw an error:
+
+```
+let condition = true;
+let number = if condition { 5 } else { "six" };
+```
+#### Repetitions with Loops
