@@ -155,3 +155,13 @@ let condition = true;
 let number = if condition { 5 } else { "six" };
 ```
 #### Repetitions with Loops
+- `loop` tells Rust to execute a block of code until you explicitly tell it to stop
+- `break` tells the program when to stop
+- you can return a value after the `break` expression
+- loop labels: must begin with a single quote, you can then use with `break` or `continue`
+
+```
+'counting_up: loop { ..}
+```
+- `while`: while condition evaluates to true, the code runs, otherwise, it exists the loop
+- `for`: for looping over each item in a collection. So we make sure index is inside bounds always, and faster
