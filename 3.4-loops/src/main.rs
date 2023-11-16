@@ -67,7 +67,3 @@ fn countdown_for_loop() {
 
     println!("LIFTOFF!!!");
 }
-
-// Ex. Convert Temperature Between Fahrenheit and Celsius
-
-// Ex. Generate the nth Fibonacci number

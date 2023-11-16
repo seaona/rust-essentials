@@ -165,3 +165,18 @@ let number = if condition { 5 } else { "six" };
 ```
 - `while`: while condition evaluates to true, the code runs, otherwise, it exists the loop
 - `for`: for looping over each item in a collection. So we make sure index is inside bounds always, and faster
+
+## 4. Understanding Ownership
+### What is Ownership
+- Each value in Rust has an owner
+- There can only be one owner at a time
+- When the owneer goes out of scope, the value will be dropped
+- Scope: a range within a program for which an item is valid. The variable is valid from the point at which it's declared until the end of the current scope.
+- **The String Type**: this type manages data allocated on the heap and as such, is able to store an amount of text that is unknown to us at compile time.
+```
+let mut s = String::from("hello");
+s.push_str(", world"); // push appends a literal to a String
+```
+- The double colon :: operator allows to namespace the `from` function under the `String` type 
+
+#### Memory and Allocation
