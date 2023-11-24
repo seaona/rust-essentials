@@ -178,5 +178,45 @@ let mut s = String::from("hello");
 s.push_str(", world"); // push appends a literal to a String
 ```
 - The double colon :: operator allows to namespace the `from` function under the `String` type 
+- To transform to string we can use:`("Example").to_string()`
 
 #### Memory and Allocation
+- With string literals, we know the contents at compile time: the text is hardcoded directly into the final executable. That's fast and efficient, because they are immutable.
+- For supporting mutable `String` types, we can't put a blob of memory into the binary for each piece of text, whose size we don't know / might change while running the program. We need to allocate an amount of memory on the heap, unknown at compile time.
+    - The memory must be requested from the memory allocator at runtime. This is done by us, when we call `String::from`
+    - We need to return this memory to the allocator when we are finished with the `String`. Usually this is done by a grabage collector: cleans up memory that's not being used anymore. In Rust, memory is automatically returned once the variable that owns it goes out of scope
+
+    ```
+    {
+        let s = String::from("Hello"); // s is valid from this point forward
+    }
+    // scope is over, s is no longer valid
+    ```
+- When the variable is out of scope, Rust calls `drop` function for us, and it's where the author of the `String` can put the code to return the memory.
+
+#### Variables and Data Interacting with Move
+- Multiple variables can interact with the same data in different ways.
+- Strings are made of 3 parts:
+    - pointer to the memory that holds the contents of the string
+    - length: how much memory (in bytes) the contents of the String are curerntly using
+    - capacity: total amount of memory (in bytes) that the String has received from the allocator
+- This group of data is stored on the stack
+- When we assign s1 to s2, the String data is copied, meaning we copy the pointer, the length and capacity that are on the stack. We don't copy the data on the heap that the pointer refers to.
+- When both s1 and s2 go out of scope, they will both try to free the same memory. This is called `double free` error. Freeing memory twice can lead to memory corruption.
+- To ensure memory safet, after assigng s1 to s2, `let s2 = s1` Rust considers `s1` no longer valid. Therefore Rust doesn't free anything when s1 goes out of scope
+- `move`: it's called when we copy the pointer, length and capacity, and invalidate the first variable.
+- Any automatic copying can be assumed to be inexpensive in terms of runtime performance.
+
+#### Variables and Data Interacting with Clone
+- If we `want` to deeply copy the heap data of the `String`, not just the stack data, we can use `clone`.
+- Code may be expensibe
+
+#### Stack-Only Data: Copy
+- With types such as integers that have a known size at compile time are stored entirely on the stack, copies of the actual values are quick to make
+- There is no difference of deep and shallow copying here.
+
+#### Ownership and Functions
+- Passing a variable to a function will move or copy, like assignments do.
+
+#### Return Values and Scope
+- Returning values can also transfer ownership

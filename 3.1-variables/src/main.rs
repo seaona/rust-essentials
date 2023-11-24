@@ -66,6 +66,12 @@ fn main() {
     let first = arr_1[0];
     let second = arr_1[1];
 
+        // array slice
+    let a = [1, 2, 3, 4, 5];
+    let nice_slice = &a[1 .. 4]; // [2, 3, 4]
+    // start_index 1 (inclusive) to end_index 4 (exclusive)
+    
+    // string
     println!("Please enter an array index.");
     let mut index = String::new();
 
@@ -81,5 +87,8 @@ fn main() {
     let element = arr_1[index];
 
     println!("The value of the element at index {index} is: {element}");
+
+    let answer = ("Example").to_string();
+    println!("answer is: {answer}");
 
 }
