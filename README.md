@@ -167,7 +167,7 @@ let number = if condition { 5 } else { "six" };
 - `for`: for looping over each item in a collection. So we make sure index is inside bounds always, and faster
 
 ## 4. Understanding Ownership
-### What is Ownership
+### 4.1. What is Ownership
 - Each value in Rust has an owner
 - There can only be one owner at a time
 - When the owneer goes out of scope, the value will be dropped
@@ -220,3 +220,53 @@ s.push_str(", world"); // push appends a literal to a String
 
 #### Return Values and Scope
 - Returning values can also transfer ownership
+
+### 4.2. References and Borrowing
+- A **reference** is like a pointer to the data stored at a particular address. The data is owned by some other variable. Unlike a pointer, a reference is guaranteed to point to a valid value of a particular type for the life of that reference.
+- Example of a function, referencing to an object as a parameter instead of taking ownership of the value
+
+```
+let s1 = String::from("hello")
+let len = calculate_length(&s1)
+
+fn calculate_length(s: &String) -> usize { s.len()}
+```
+
+- `&s1` lets us create a reference to s1 but does not own it. The value it points to will not be dropped when the reference stops being used.
+- The signature of the function uses `&` to indicate that the type of the parameter `s` is a reference.
+- The opposite of referencing is **dereferencing** whis is accomplished with the dereference operator `*`.
+- We call **borrowing** the action of creating a reference.
+- References cannot be modified. Thus this throws an error:
+```
+fn change(s: &String) {
+    s.push_str("word");
+}
+```
+
+#### Mutable References
+- We can modify a borrowed value using a mutable reference: `fn change(some_string: &mut String)`
+- Mutable references cannot have other references to that value. This prevents **data races** at compile time. They happen when these 3 points occur:
+    - two or more pointers access the same data at the same time
+    - at least one of the pointers is being used to write to the data
+    - there's no mechanism beign used to synchronize access to data
+- We can use curly brackets to create a new scope, allowing for mutiple mutable references, just not **simulateneous** ones.
+
+```
+let mut s = String::from("hello");
+{
+    let r1 = &mut s;
+} // r1 goes out of scope, so we can make a new reference without problems
+
+let r2 = &mut s;
+```
+- We cannot have a mutable reference while we have an immutable one to the same value.
+- Multiple immutable references are allowed because no one who is just reading the data has the ability to affect anyone else's reading of the data
+
+#### Dangling Referencess
+- **dangling pointer**: a pointer that references a location in memory that may have been given to someone else. Rust guarantees that references will never be dangling: if you have a reference to some data, the compiler ensures that the data will not go out of scope before the reference to the data does.
+
+### 4.3. The Slice Type
+- **slice** refers to a contiguous sequence of elements in a collection, rather than the complete collection. A slice is a kind of reference, so it does not have ownership.
+
+
+## 5. Using Structs to Structure Related Data
