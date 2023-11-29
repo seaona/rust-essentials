@@ -267,6 +267,27 @@ let r2 = &mut s;
 
 ### 4.3. The Slice Type
 - **slice** refers to a contiguous sequence of elements in a collection, rather than the complete collection. A slice is a kind of reference, so it does not have ownership.
+- `let slice = &s[0..5]` is a reference to a portion of the String s. We specify `[starting_index..ending_index]`
+- If you want to start at index 0, you can drop the first value `let slice = &s[..2]`
+- If the slice includes the last byte of the String you can drop the last value `let slice = &s[3..]`
+- You can drop both values to take a slice of the entire string
 
+#### String Literals as Slices
+- `let s = "hello, world` the type of s is `&str`
+- String literals are immutable: `&str` is an immutable reference
+
+#### String Slices as Parameters
+- defining a function to take a string slice instead of a reference to a String makes our API more general and useful without losing any functionality. So instead of:
+    - `fn first:word(s: &String) -> &str`
+    - we do: `fn first:word(s: &str) -> &str`
+- This takes advantage of the **deref coercions**
+
+#### Other Slices
+- We can use slice with other types, like an array
+
+```
+let a = [1, 2, 3, 4, 5];
+let slice = &a[1..3];
+```
 
 ## 5. Using Structs to Structure Related Data
