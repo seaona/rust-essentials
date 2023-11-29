@@ -291,3 +291,10 @@ let slice = &a[1..3];
 ```
 
 ## 5. Using Structs to Structure Related Data
+- A struct is a custom data type, like an object with attributes.
+- They are like tuples, but you name each piece of data: they are more flexible, as you don't have to rely on the order of the data to specify or access the values of an instance
+- To use a struct after we've defined it, we create an instance of that struct.
+- If we want it to be mutable, the whole instance must be
+- Struct update syntax uses `=` because it moves data.
+- **Tuple Structs**: don't have names associated with their fields, just the types of the fields.
+- **Unit-Like Structs**: structs that don't have any fields. USeful when you need to implement a trait on some type but don't have any data that you want to store in the type itself.
