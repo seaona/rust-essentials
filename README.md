@@ -298,3 +298,40 @@ let slice = &a[1..3];
 - Struct update syntax uses `=` because it moves data.
 - **Tuple Structs**: don't have names associated with their fields, just the types of the fields.
 - **Unit-Like Structs**: structs that don't have any fields. USeful when you need to implement a trait on some type but don't have any data that you want to store in the type itself.
+- **Ownership of Struct Data**: in the instance of `User` we used the owned `String` type rather than the `&str` string slice type, because we want each instance of this struct to own all of its data, and the data to be valid for as long as the entire struct is valid.
+    - it's also possible for structs to store references to data owned by something else, but it requires the use of **lifetimes**, to ensure the data referenced is valid for as long as the struct is.
+    ```
+    struct User {
+        active: bool,
+        username: &str,
+        email: &str,
+        sign_in_count: u64
+    }
+    ```
+- **Printing struct values**: 
+    -   with structs, is less clear how to display the values (there are many possibilities) with Display. So we can use `{:?}` or `{:#?}` (easier to read) for debugging purposes to see the values of a struct and we add `#[derive(Debug)]` attribute before the struct definition
+    - another way is use `dbg!` macro, which takes ownership of an expression (as opposed to `println!`), prints the file and line number where the macro call occurs with the value and returns ownership of the value
+
+### Method Syntax
+- We declare them with `fn` keyword and name, they can have parameters and a return value.
+- Methods are defined within the context of a struct (or enum or a trait object) and the first parameter is always `self`, which represents the instance of the struct the method is being called on
+- To define a function in the context of a struct we start an `impl` (implementation) block
+- We do `fn area(&self)` where `&self`` is short for `self: &Self``
+- Methods must have a parameter named self of type Self for their first parameter
+- We can name a method the same name as one of the struct's fields. Often we give the same name when we want to return the value in the field and do nothing else. They are called **getters**. They are useful, because you can make the field private, but the method public, and thus enable read-only access to that field as part of the type's public API
+- **Automatic referencing and Dereferencing**: when you call a method with `object.something()`, Rust automatically adds in `&`, `&mut` or `*` so `object` matches the signature of the methods. So these are the same:
+
+```
+p1.distance(&p2);
+(&p1).distance(&p2);
+```
+
+- This automatic referencing behaviour works because methods have a clear receiver - the type `self`. Given teh receiver and name of a method, Rust can figure out definetively whether the method is reading (`&self`), mutating (`&mut self`)  or consuming (`self`)
+
+#### Associated Functions
+- All functions defined within an `impl` block are **associated functions** because they are associated with the type named after `impl`.
+- We can define associated functions that don't have the `self` as their first param (and thus they are not methods) because they don't need an instance of the type to work with
+- To call associated functions we use `::` syntax with the struct name `let sq = Rectangle::square(3)`. The function is namespaced by the struct. The `::` syntax is used for both associated functions and namespaces created by modules.
+
+#### Multiple impl blocks
+- Each struct is allowed to have multiple `impl` blocks.

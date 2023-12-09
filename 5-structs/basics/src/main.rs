@@ -6,6 +6,9 @@ struct User {
     sign_in_count: u64,
 }
 
+// unit-like struct
+struct AlwaysEqual;
+
 fn main() {
     let mut user1 = User {
         active: true,
@@ -37,6 +40,9 @@ fn main() {
     // tuple structs
     let black = Color(0, 0, 0, 0);
     let origin = Point(0, 0, 0, 0);
+
+    // unit-like struct
+    let subject = AlwaysEqual;
 }
 
 
@@ -52,3 +58,24 @@ fn build_user(email: String, username: String) -> User  {
 // tuple structs
 struct Color(i32, i32, i32, i32);
 struct Point(i32, i32, i32, i32);
+
+
+// Ownership of Struct Data
+
+// if we want to store reference of data owned by somehtin else,
+// we need to use lifetimes (chapter 10)
+struct User {
+    active: bool,
+    username: &str, // error: expected named lifetime parameter
+    email: &str, // error: expected named lifetime parameter
+    sign_in_count: u64
+}
+
+fn ref () {
+    let user1 = User {
+        active: true,
+        username: "someusername",
+        email: "somemail@exasmple.com",
+        sign_in_count: 1,
+    }
+}
