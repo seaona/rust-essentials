@@ -328,10 +328,52 @@ p1.distance(&p2);
 
 - This automatic referencing behaviour works because methods have a clear receiver - the type `self`. Given teh receiver and name of a method, Rust can figure out definetively whether the method is reading (`&self`), mutating (`&mut self`)  or consuming (`self`)
 
-#### Associated Functions
+### Associated Functions
 - All functions defined within an `impl` block are **associated functions** because they are associated with the type named after `impl`.
 - We can define associated functions that don't have the `self` as their first param (and thus they are not methods) because they don't need an instance of the type to work with
 - To call associated functions we use `::` syntax with the struct name `let sq = Rectangle::square(3)`. The function is namespaced by the struct. The `::` syntax is used for both associated functions and namespaces created by modules.
 
-#### Multiple impl blocks
+### Multiple impl blocks
 - Each struct is allowed to have multiple `impl` blocks.
+
+## 6. Enums and Pattern Matching
+- `enums` allow you to define a type by enumerating its possible variants. It gives you a way of saying a vlaue is one of a possible set of vlaues.
+- The name of each enum variant becomes a function that constructs an instance of the enum.
+- We are also able to define methods on structs using `impl`
+
+### The Option Enum
+- `Option` is an enum defined in the standard library. It encodes a very common scenario where a value could be something or nothing. Expressing this concept means the compiler can check whether you've handled all the cases you should be handling
+- Rust does not have `null`but it does have an enum that can encode the concept of a value being present or absent. This enum is `Option<T>` and it's defined as:
+```
+enum Option<T> {
+    None,
+    Some(T),
+}
+```
+- The `Option <T>` is included in the prelude: you don't need to bring it into scope explicitly. Its variants are also included in the prelude, you can use `Some(T)` and `None` without the `Option::` prefix.
+- `<T>` means that the `Some` variant can hold one piece of data of any type, and each concrete type that gets used in place of `T` makes the overall `Option <T>` type a different type.
+
+### The `match` Control Flow Construct
+- The power of `match` comes from the expressiveness of the patterns and the fact that the compiler confirms that all possible cases are handled
+- The first pattern the value "fits", the value falls into the associated code block to be used during execution
+- The `match` keyword is followed by an expression (it can be any type, unlike `if` which needs a boolean)
+- Arms have 2 parts: a pattern and some code. The `=>` separates the pattern and the code to run
+- Each arm is separated by a comma
+
+#### Patterns That Bind to Values
+- We can have an anum with data `Quarter(UsState)` and then bind the state with the value with we call the function `value_in_cents(Coin::Quarter(UsState::Alaska))`. The arm of the match option can use the state info, binding it `Coin::Quarter(state) => println!("State quarter from {:?}!", state); }`
+
+#### Matching with Option<T>
+- Combining `match` and enums is common. Match against an enum, bind a variable to the data inside and then execute the code based on it.
+- Matches are exhaustive: we must exhaust every last possibility in order for the code to be valid.
+
+#### Catch-all Patterns and the _Placeholder
+- If we want to catch-all the options, and use the value we can use the `other` arm
+- If we want to catch-all the options, but don't want to use the value, we can use `_`, it matches any value and does not bind to that value.
+- If we want to express that nothing happens for a certain arm, we can use `()`
+
+### Consice Control Flow with `if` `let`
+- Instead of using the `_` and `()` together, to indicate that nothing should happen for the rest of the cases, we can use the `if` `let` pattern
+
+## 7. Managing Growing Projects with Packages, Crates and Modules
+
