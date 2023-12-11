@@ -376,4 +376,65 @@ enum Option<T> {
 - Instead of using the `_` and `()` together, to indicate that nothing should happen for the rest of the cases, we can use the `if` `let` pattern
 
 ## 7. Managing Growing Projects with Packages, Crates and Modules
+- A package can contain multiple binary crates and optionally one library crate
+- Scope: the nested context in which the code is written has a set of names that are defined `in scope`. You can create scopes and change which names are in or out of scope. You can't have two items with the same name in the scope.
+- The module system, includes:
+    - **packages**: a cargo feature that lets build, test and share crates
+    - **crates**: a tree of modules that produces a library or executable
+    - **modules** and **use**: lets control the organization, scope and privacy of paths
+    - **paths**: a way of naming an itrem, such as a struct, function or module
 
+### 7.1 Packages and Crates
+- A **crate** is the smaller amount of code that Rust compiler considers at a time. Crates can contain modules and the modules may be defined in other files that get compiled with the crate. Crates can come in 2 forms:
+    - *Binary crates**: programs you can compile to an executable that you can run, such a command-line program or a server. Each musth have a function called `main` that defines what happens when the executable runs
+    - **Library crates**: don't have a `main` function and they don't compile to an executable. Instead, they defined functionality intended to be shared with multiple projects. The **crate root** is a source file that Rust compiler starts from and makes up the root module of your crate.
+- A **package** is a bundle of one or more crates that provides a set of functionality. A package contains a `Cargo.toml` file that describes how to build those crates. Cargo is actually a package that contains a library crate that the binary crate depends on.
+    - a package can contain as many binary crates as you want, but at most only one library crate
+    - a package must contain at least one crate, whether that's a library or a binary crate
+
+### 7.2 Defining Modules to Control Scope and Privacy
+#### Modules Cheat Sheet
+- Start from the crate root: when compiling a crate, the compiler first looks in teh crate root file (`src/lib.rs`for a library crate or `src/main.rs` for a binary crate)
+- Declaring modules: say you declare a new module `mod garden;`. The compiler will look for the module's code in these places:
+    - inline, within curly brackets that replace the semicolon following `mod garden`
+    - in the file `src/garden.rs`
+    - in the file `src/garden/mod.rs`
+- Declaring submodules: in any file other than the crate root, you can declare submodules. You can declare `mod vegetables;` in `src/garden.rs`. The compiler will look for the submodule in these places:
+    - inline, within curly brackets that replace the semicolon following `mod vegetables`
+    - in the file `src/garden/vegetables.rs`
+    - in the file `src/garden/vegetables/mod.rs`
+- Paths to code in modules: once a module is part of your crate, you can refer to code in that module from anywhere else in the same crate, as long as the privacy rules allow, using the path of the code. Ex an `Asparagus` type can be found at `crate::garden::vegetables::Asparagus`
+- Private vs Public: code withing a module is private from its parent modules by default. To make a module public, declare it with `pub mod` instead of `mod`. To make items within a public module public as well, use `pub` before their declarations
+- The `use` keyword: withing a scope, the `use` keyword creates shortcuts to items to reduce repetition of long paths. I.e. `use crate::garden::vegetables::Asparagus`
+- To create a new library called restaurant: `cargo new restaurant --lib`
+- We define a module with the keyword `mod` and the name of the module `mod serving`. Inside other module we can place other modules, definitions of other items such as structs, enums etc and functions.
+- The entire module tree is rooted under the implicit module named `crate`. Modules can have siblings (defined in the same modules), parents and childs.
+
+### 7.3 Paths for Referring to an Item in the Module Tree
+- **Absolute path**: the full path starting from a crate root; for code from an external crate, the absolute path begins with the crate name, and for code from current crate, it starts with the literal `crate`
+- **Relative path**: starts from the current module and uses `self`, `super` or an identifier in the current module
+- Our preference in general is to specify absolute paths because it's more likely we'll want to move code definitions and item calls independently of each other.
+- Starting relative paths with `super`: allows us to reference an item that we know is in the parent module, 
+
+#### Making `structs` and `enums` Public
+- If we use `pub` before a struct definition, we make the struct public, but the struct's fields will still be private. We can make each field public or not on a case-by-case basis.
+- If a struct has a private field, the struct needs to provide a public associated function that constructs an instance of the struct
+- If we make an `enum` public, all its variants are then public
+
+### 7.4 Bringing Paths into Scope with the `use` of Keyword
+- We can create a shortcut to a path with the `use` keyword once, and then use the shorter name everywhere else in the scope
+- It's similar to creating a symbolic link in the filesystem
+- Paths brought into scope with `use` also check privacy.
+- We can specify `as` and a new local name or alias for the type: `use std:io::Result as IoResult`
+**Re-exporting**: when we bring a name into scope with `use`, the name available in the new scope is private. To enable the code that calls our code to refer to that name, as if it had been defined in that code's scope, we can combine `pub` and `use`.
+- The standard `std` library is also a crate that's external to our package, but because is shipped with the Rust language, we don't need to change Cargo.toml to include `std`. But we do need to refer to it with the `use` to bring items from there into our package's scope. I.e. absolute path: `use std::collections::HashMap;`
+- We can use nested paths to bring the same items into cope in one line.
+```
+use std::cmp::Ordering;
+use std::io;
+```
+Instead, we use:
+`use std::{cmp::Ordering, io};`
+- **The Global Operator**: if we want to bring all public items defined in a path, into scope we can use `*`. Example: `use std::collections::*`. It's usually used under tests into the `tests` module. Sometimes also used as part of the prelude pattern.
+
+## 8. Common Collections
