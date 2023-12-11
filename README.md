@@ -438,3 +438,19 @@ Instead, we use:
 - **The Global Operator**: if we want to bring all public items defined in a path, into scope we can use `*`. Example: `use std::collections::*`. It's usually used under tests into the `tests` module. Sometimes also used as part of the prelude pattern.
 
 ## 8. Common Collections
+- Unlike the built-in array and tuple types, the data the collections point to is stored on the heap, which means the amount of data does not need to be known at compile time and can grow or shrink as the program runs.
+
+### 8.1. Storing Lists of Values with Vectors
+- `Vec<T>`: allow to store more than one value in a single data structure, that puts all the values next to each other in memory. They can only store values of the same type. Useful when you have a list of items.
+- To create a vector: `lete v: Vec<i32> = Vec::new();`
+- Since we didn't insert any values, we need to add the type. Vectors are implemented using generics. If we add initial values, Rust will infer the type
+- Rust provides the `vec!` macro, which will create a new vector that holds the values you give it
+- For updating a vector we can use the `push` method. We need to make the vector mutable
+- For accessing the elements of a vector we can use:
+    - `v.get(2)` we get an Option<&T> that we can use with `match`
+    - `&v[2]` this gives us a reference to the element at the index value
+- **Iterating over the values**: we iterate through all the elements rather than use indices to access one at a time. Types:
+    - Immutable reference: `for i in &v`
+    - Mutable Reference: `for i in &mut v { *i +=50}`. We add 50 to the current element. We need to derefernce to get the value in i before using the operator +=
+    
+#### Using an `enum` to Store Multiple Types
