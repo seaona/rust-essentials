@@ -1,4 +1,5 @@
 # Rust Essentials
+Notes based on the [Rust Programming Language book](https://doc.rust-lang.org/book/title-page.html).
 ## 1. Getting Started
 ### Basic Commands
 - Compile a file: `rustc <<FILE_NAME>>`
@@ -454,3 +455,32 @@ Instead, we use:
     - Mutable Reference: `for i in &mut v { *i +=50}`. We add 50 to the current element. We need to derefernce to get the value in i before using the operator +=
     
 #### Using an `enum` to Store Multiple Types
+- Vectors can only store values with the same type. Fortunately, the variants of an enum are defined under the same enum type, so when we need one type to represent elements of different types, we can use an enu,
+- Rust needs to know what types will be in the vector at compile time, so it knows exactly how much memory on the heap will be needed to store each element. We must also be explicit about what types are allowed in the vector
+- Using an `enum` plus a `match` expression means that Rust will ensure at compile time that every possible case is handled.
+
+#### Dropping a Vector Drops its elements
+- when the vector gets dropped, all of its contents are also dropped, meaning the integers it holds will be cleaned up
+
+### 8.2 Storing UTF-8 Encoded Text with Strings
+- Strings are implemented as a collection of bytes, plus some methods to provide useful functionality when those bytes are interpreted as text
+- Rust has only one string type in the core language, which is teh string slice `str`, usually seen in its borrowed form `&str`, which are references to some UTF-8 encoded string data stored elsewhere. String literals, for example, are stored in the program's binary and are therefore string slices
+- The `String` type, which is provided by Rust's standard library, rather that coded into the core language, is a growable, mutable, owned, UTF-8 encoded string type.
+
+#### Creating a New String
+- Many of the same operations available with `Vec<T>` are available with `String`, because is implemented as a wrapper around a vector of bytes with some extra guarantees, restrictions and capabilities
+- Strings are UTF-8 encoded, so we can include any properly encoded data in them
+
+#### Updating a String
+- A string can grow in size, using `push_str`, `+`, `format!`
+- `push_str` takes a parameter but does not take ownership of it
+- The `push` method, takes a single character as a parameter and adds it to the String.
+- To combine to existing strings, we use `+`. The `+` operator uses the `add` method, whose signature looks something like this: `fn add(self, s: &str) -> String`. We can only add a `&str` to a String. The compiler can coece the `&String` argument into a `&str`
+- We can also use the `format!` macro for concatenating strings. It uses references to it does not take ownership of any of its parameters
+
+#### Indexing into Strings
+- Rust strings don't support indexing.
+- The index of string's bytes does not always correlates to a valid unicode scalar value. I.e. the length of this string is not 12 `"Здравствуйте"`, but 24: that's the number of bytes it takes to encode it in UTF-8, bc each Unicode scalar value in that string takes 2 bytes of storage.
+- `&"hello[0]` it would return `104` (the byte value - ASCII) not `h`. But Rust doesn't compile the code at all, to avuid misunderstanding.
+
+#### Bytes and Scalar Values and Grapheme Clusters
