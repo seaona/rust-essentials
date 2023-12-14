@@ -484,3 +484,39 @@ Instead, we use:
 - `&"hello[0]` it would return `104` (the byte value - ASCII) not `h`. But Rust doesn't compile the code at all, to avuid misunderstanding.
 
 #### Bytes and Scalar Values and Grapheme Clusters
+- There are 3 ways to look at strings from Rust's perspective:
+  - bytes
+  - scalar values
+  - grapheme clusters (letters)
+- Example: the Hindi word “नमस्ते”:
+    - as 18 bytes (a vector of `u8` values): `[224, 164, 168, 224, 164, 174, 224, 164, 184, 224, 165, 141, 224, 164, 164,
+224, 165, 135]`
+    - as unicode scalar values (which are what Rust's char is): `['न', 'म', 'स', '्', 'त', 'े']` they are 6 char values, but the fourth and the sixth are not letters, they are diacritics, that don't make sense on their own
+    - as grapheme clusters (we'd get what a person would call the 4 letters that make up for the word): `["न", "म", "स्", "ते"]`
+- A reason Rust's doesn't allow us to index into a `String` to get a char is that indexing operations are expected to always take constant time (O(1)). But it isn't possilbe to guarantee that performance with a String, bc Rust would have to walk through the contents from the beginning to the index to determine how many valid characters there were
+
+#### Slicing Strings
+- Rather than indexing using `[]` with a single nmber, you can use `[]` with a range to create a string slice containing particular bytes
+- You can only slice complete chars. I.e. having `let hello = "Здравствуйте";` you can slice `&hello[0..4]` - that would be 2 chars (4 bytes), but you cannot slice `&hello[0..1]` as this tries to slice only a part of a character's bytes
+
+
+#### Methods for Iterating over Strings
+- You need to be explicit about whether you want characters or bytes.
+    - For individual unicode values, use the `chars` method. `.chars()` separates the values and returns them of type char, and you can iterate over the result
+    - For bytes, you can use `.bytes()`. Remember that valid unicode scalar values may be made up of more than 1 byte
+    - Getting grapheme clusters from strings is complex, so this functionality is not provided by the standard library
+
+### 8.3 Hash Maps
+- The type `HashMap<K, V>` stores a mapping of keys of the type K to values of type V, using a hash function, to determine how it places these keys and values into memory.,
+- It's useful when you want to look up data not by using an index, but by using a key that can be of any type.
+- Hashmap is not included in the prelude, so for using it you need to bring it to scope `use std::collections::HashMap;`
+- Like vectors, hashmaps store they data on the heap
+- Like vectors, all the keys must have the same type, and all the values must have the same type
+- To access values of a hashmap you can do `scores.get(&team_name).copied.unwrap_or(0);`
+    - the `get` method reutns an `Option<&V>`. If there's no value for that key, it will return `None`
+    - it handles the option by calling `copied()` to get an `Option<i32>` rather than an `Option<&i32>`
+    - then unwrap_or() to set `score` to 0, if scores does not have any entry for the key
+
+#### Hash Maps and Ownership
+- For types that implement the `Copy` trait, like `i32`, the values are copied into the has map.
+- For owned values like `String`, the values will be moved and the hashmap will be the owner of those

@@ -48,15 +48,15 @@ fn main() {
     }
 
     // iterating over values - mutable reference
-    let v6 = vec![100, 32, 57];
-    for i in &mut v6 {
+    let mut v7 = vec![100, 32, 57];
+    for i in &mut v7 {
         // we use the * dereference operator to get the value i before we can use the += operator
         *i += 50;
     }
 
     
     // using an enum to store multiple types
-    enu, SpreadsheetCell {
+    enum SpreadsheetCell {
         Int(i32),
         Float(f64),
         Text(String),
@@ -68,4 +68,22 @@ fn main() {
         SpreadsheetCell::Float(10.12),
     ];
 
+    // Slicing Strings
+    let hello = "Здравствуйте";
+
+    // each of char is 2 bytes, so we'll get Зд
+    let s = &hello[0..4];
+
+    // trying to slice only part of a character's bytes [0..1] will panic
+    //let s2 = &hello[0..1];
+
+
+    // Iterating over strings
+    for c in "Зд".chars() {
+        println!("{c}");
+    }
+
+    for b in "Зд".bytes() {
+        println!("{b}");
+    }
 }
