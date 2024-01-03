@@ -498,7 +498,9 @@ Instead, we use:
 #### Slicing Strings
 - Rather than indexing using `[]` with a single nmber, you can use `[]` with a range to create a string slice containing particular bytes
 - You can only slice complete chars. I.e. having `let hello = "Здравствуйте";` you can slice `&hello[0..4]` - that would be 2 chars (4 bytes), but you cannot slice `&hello[0..1]` as this tries to slice only a part of a character's bytes
-
+- `&str` (String Slice): This is a string slice, which is essentially a reference to a portion of a string. It is a borrowed reference to a sequence of UTF-8 bytes. It's a more flexible and efficient way to work with string data when you don't need ownership or want to avoid allocating memory. Functions that take &str typically work with existing string data without creating new instances.
+- `String`: This is a heap-allocated, growable, mutable string. It is an owned type, meaning that the data it contains is owned by the String variable. It can be modified and resized as needed. If you need to manipulate the string and modify it, or if you need to own the string data, then String is the appropriate type.
+- Ex `fn to_pig_latin(s: &str) -> String`. By accepting a reference to &str as the input parameter, the function can handle both string literals (&str) and String instances without requiring unnecessary conversions when calling the function. This makes the function more versatile and idiomatic in Rust.
 
 #### Methods for Iterating over Strings
 - You need to be explicit about whether you want characters or bytes.
@@ -520,3 +522,22 @@ Instead, we use:
 #### Hash Maps and Ownership
 - For types that implement the `Copy` trait, like `i32`, the values are copied into the has map.
 - For owned values like `String`, the values will be moved and the hashmap will be the owner of those
+
+#### Updating a Hash Map
+- Although the number of key and value pairs is growable, each unique key can only have one value associated with it at a time (but not vice versa)
+- When you want to change the data in a hash map, you have to decide how to handle the case when a key has already a value assigned 
+    - over write the old value
+    - ignore the new value if a key already exists:  has maps have the API `entry` that takes the key you want to check as a parameter. The return value is an enum called `Entry` that represents a value that might or might not exist. The `or_insert` method on `Entry` is defined to return a mutable reference to the value for the corresponding `Entry` key if that key exists, and if not, inserts the parameter as the new value for this key and returns a mutable reference to the new value.
+    - updating a value based on the old value
+
+#### Hashing functions
+- HashMap uses a hashing funtion called `SipHash` that can provide resistance to Denial of Service attacks involving tables. It is not the fastest hashing algorithm, but the trade-off for better security is worth it.
+- You can switch to another function by specifying a different `hasher` (a type that implements the `BuildHasher` trait).
+
+## Other Useful Commands
+- Run doc for a project overview: `cargo doc --open --no-deps`
+- Run tests: `cargo test --release test_merkle_tree`
+- Run tests and print the statements (by default the print statement will be eaten by the rust test ahrness) `cargo test --release test_merkle_tree -- --nocapture`
+- Run a Rust formatter `cargo fmt`
+- Run a bunch of lints to catch common mistakes `cargo clippy`
+- There's no reason to declare your variables early in the function. That's the kind of thing you would do in very old C or JavaScript and isn't required in modern languages. Declare them as late as possible.
