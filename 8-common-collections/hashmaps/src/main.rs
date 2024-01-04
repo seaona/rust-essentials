@@ -1,4 +1,6 @@
 use std::collections::HashMap;
+use std::io;
+use std::io::BufRead;
 
 fn main() {
     // creating a hashmap
@@ -50,9 +52,9 @@ fn main() {
 
     println!("{:?}", map2);
 
-    exercise_1();
-    exercise_2();
-
+    //exercise_1();
+    //exercise_2();
+    exercise_3();
 }
 
 fn exercise_1() {
@@ -89,45 +91,102 @@ fn mode(numbers: &[i32]) -> i32 {
         .expect("Cannot compute the mode of zero numbers")
 }
 
-fn exercise_2() {
-    // convert strings to pig latin
-        // the 1st consonant of each word is moved to the end of the word and 'ay' is added
-            // first -> irst-fay
-        // words that start with a vowel, have 'hay added to the end
-            // apple -> apple-hay
-    let s = String::from("Apple");
-    s.split_whitespace()
-        .map(to_pig_latin)
-        .fold(String::new(), folder)
+// fn exercise_2() {
+//     // convert strings to pig latin
+//         // the 1st consonant of each word is moved to the end of the word and 'ay' is added
+//             // first -> irst-fay
+//         // words that start with a vowel, have 'hay added to the end
+//             // apple -> apple-hay
+//     let s = String::from("Apple");
+//     s.split_whitespace()
+//         .map(to_pig_latin)
+//         .fold(String::new(), folder)
 
-    println!("The string is {s} in pig latin");
-}
+//     println!("The string is {s} in pig latin");
+// }
 
-fn to_pig_latin(s: &str) -> String {
-    let mut chars = word.chars();
+// fn to_pig_latin(s: &str) -> String {
+//     let mut chars = word.chars();
 
-    let first_char = match chars.next() {
-        Some(c) => c,
-        None => return String::new(),
-    };
+//     let first_char = match chars.next() {
+//         Some(c) => c,
+//         None => return String::new(),
+//     };
 
-    match first_char {
-        'a' | 'e' | 'i' | 'o' | 'u' => format!("{}-hay", word),
-        _ => format!("{}-{}ay", chars.as_str(), first_char),
-    }
-}
+//     match first_char {
+//         'a' | 'e' | 'i' | 'o' | 'u' => format!("{}-hay", word),
+//         _ => format!("{}-{}ay", chars.as_str(), first_char),
+//     }
+// }
 
-fn folder(mut current: String, next: String) -> String {
+/* fn folder(mut current: String, next: String) -> String {
     if !current.is_empty() {
         current.push(' ');
     }
 
     current.push_str(&next);
-}
+} */
 
 fn exercise_3() {
     // Create a text interface to allow a user to add employee names to a department in a company
     // For example, “Add Sally to Engineering”
 
-    let mut map = HashMap::new();
+    let mut workforce: HashMap<String, Vec<String>> = HashMap::new();
+    let stdin = io::stdin();
+
+    println!("Type 'Add <name> to <department>' to add an employee");
+    println!("Type 'List <department>' to list the employees of a department");
+    println!("Type 'All' to list all employees by department");
+    println!("Type 'Quit' to quit");
+    for line in stdin.lock().lines() {
+        let input = line.expect("failed to read line");
+        match Command::from_input(&input) {
+            Some(Command::Add { dept, name }) => workforce.entry(dept).or_default().push(name),
+            Some(Command::List(dept)) => match workforce.get(&dept) {
+                Some(names) => {
+                    for name in names {
+                        println!("{}: {}", dept, name);
+                    }
+                }
+                None => println!("This department does not exist"),
+            },
+            Some(Command::All) => {
+                for(dept, names) in &workforce {
+                    let mut names = names.clone();
+                    names.sort();
+                    for name in names {
+                        println!("{}: {}", dept, name);
+                    }
+                }
+            }
+            Some(Command::Quit) => break,
+            None => println!("Input error"),
+        }
+        println!("Bye");
+    }
+
+}
+
+enum Command {
+    Add { dept: String, name: String},
+    List(String),
+    All,
+    Quit,
+}
+
+// associated functions
+impl Command {
+    fn from_input(s: &str) -> Option<Self> {
+        let words: Vec<&str> = s.trim().split_whitespace().collect();
+        match words.as_slice() {
+            ["All"] => Some(Command::All),
+            ["Quit"] => Some(Command::Quit),
+            ["List", dept] => Some(Command::List(dept.to_string())),
+            ["Add", name, "to", dept] => Some(Command::Add {
+                dept: dept.to_string(),
+                name: name.to_string(),
+            }),
+            _ => None,
+        }
+    }
 }

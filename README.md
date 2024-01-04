@@ -532,7 +532,64 @@ Instead, we use:
 
 #### Hashing functions
 - HashMap uses a hashing funtion called `SipHash` that can provide resistance to Denial of Service attacks involving tables. It is not the fastest hashing algorithm, but the trade-off for better security is worth it.
-- You can switch to another function by specifying a different `hasher` (a type that implements the `BuildHasher` trait).
+- You can switch to another function by specifying a different `hasher` (a type that implements 
+the `BuildHasher` trait).
+
+
+## 9. Error Handling
+- Types of errors:
+    - Recoverable: such as 'file not found', we mostly like to just report the problem to the user and retry the operation. It has the type `Result<T, E>` for recoverable errors
+    - Unrecoverable: they are symptoms of bugs, like trying to access a location beyond the end of an array, so we want to immediately stop the program. It has the `panic!` macro that stops execution
+- Rust doesn't have exceptions
+
+### Unrecoverable Errors with `panic!`
+- There are 2 ways to cause a panic in practice: taking an action that causes our code to panic or by calling the `panic!` macro explicitly
+- The panic will: print the failure message, unwind, clean up the stack and quit. Via environmnet variable, you can also display the call stack when panic occurs
+- `Unwinding`: walks back up the stack and cleans up the data from each function it encounters. It's a lot of work, so Rust allows you to choose the alternative of immediately aborting, which ends the program without cleaning up.
+- Memory that the program was using needs to be cleaned up by the operating system
+- You can switch from unwinding to aborting upon panic by adding `panic = 'abort` to the appropiate `[profile]` sections in your Cargo.toml file. Ex, abort on panic in release mode: 
+
+```
+[profile.release]
+panic 'abort'
+```
+- **Buffer overread**: attempting to access an element from a vector which doesn't exist. It can lead to security vulnerabilities if the attacker is able to manipulate the index in such a way as to read data they shouldn't be allowed to that is stored after the data structure. To protect you from this, Rust stops execution and panics.
+- **Backtrace**: a list of all the functions that have been called to get to this point. They are read from the top (start). `RUST_BACKTRACE=1 cargo run`
+
+### Recoverable Errors with `Result`
+- The `Result` enum has two variants `Ok` and `Err`:
+```
+enum Result<T, E> {
+    Ok(T),
+    Err(E),
+}
+```
+- The T and E are generic types: T represents the type of the value that will be returned in a success case OK variant, E represents the type of error that will be returned in a case of failure case within the Err variant.
+- The Result enum and its variants have been brought into scope by the prelude, so we don’t need to specify Result:: before the Ok and Err variants in the match arms.
+- An alternative to using `match` is to use `.unwrap_or_else`
+
+#### Shortcuts for Panic on Error: unwrap and expect
+- The `unwrap` method is a shortcut which will return the value inside the ÇOk. If the result is Err, unwrap will call panic! for us
+- The `expect` returns or calls panic!. It's more used than unwrap.
+
+### Propagating Errors
+- You can return the error to the calling code, so that it can decide what to do
+- Rust provides the `?` operator to make it easier
+- `?` operator can only be used in functions whose return type is compatible with the value the `?` is used on
+- `?` can be used with return type `Result<T, E>` and `Option<T>` 
+
+### To panic! or Not to panic!
+- In prototype code and tests, it's more appropiate to write code that panics instead of returning a Result
+- Methods like `unwrap` and `expect` are very handy when prototyping, before deciding how to handle errors.
+- If you can ensure that you'll never have an `Err` variant, it's perfectly fine to call `unwrap` and document the reason you think you'll never have the Err variant in the expect text.
+- When failure is expected, it’s more appropriate to return a Result than to make a panic!
+- Functions often have **contracts**: their behavior is only guaranteed if the inputs meet particular requirements. Panicking when the contract is violated makes sense because a contract violation always indicates a caller-side bug and it’s not a kind of error you want the calling code to have to explicitly handle.
+
+### Creating Custom Types for Validation
+- We can make a new type and put the validations in a function to create an instance of the type, rather than repeating the validations everywhere (with if conditions)
+
+
+## 10. Generic Types, Traits and Lifetimes
 
 ## Other Useful Commands
 - Run doc for a project overview: `cargo doc --open --no-deps`
