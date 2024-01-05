@@ -590,6 +590,27 @@ enum Result<T, E> {
 
 
 ## 10. Generic Types, Traits and Lifetimes
+- **Generics**: abstract stand-ins for concrete types or other properties. Functions can take parameters of some generic type, instead of a concrete type like `i32`. I.e. `Vec<T>`, `Hashmap<K, V>`, `Result<T, E>`.
+- **Traits**: to define behaviour in a generic way. You can combine traits with generic types to constrain a generic type to accept only those types that have a particular behaviour
+- **Lifetimes**: a variety of generics that five the compiler information about how references relate to each other.
+
+### Generic Data Types
+- We place the generics in the signature of the function where we would usually specify the data types of the parameters and return value.
+- We can define structs to use generic type parameter in one or more fields using `<>` syntax
+- We can also use generics in enums
+- We can also use generics in methods. `impl<T> Pint<T>`, this indicates that the type in the angle brackets in Point is a generic type rather than a concrete type.
+
+#### Performance using Generics
+- **Monomorphization**: is the process of turning generic code into specific code by filling in the concrete types that are used when compiled: the compiler looks at all the places where generic code is called and generates code for the concrete types the generic code is called with
+
+### Traits: Defining Shared Behaviour
+- We can use traits to define shared behaviour in an abstract way
+- We can use **trait bounds** to specify that a generic type can be any type that has certain behaviour
+- A type's behaviour consists of the methods we can call on that type
+- Trait definitions are a way to group method signatures together to define a set of behaviours
+- Declare a trait called Summary: `pub trait Summary {}` and inside, we declare a function signature with a semicolon instead of providing an implementation `fn summarize(&self) -> String`
+- Implementing a trait on a type: `impl Summary for Tweet {...}` we put the trait name and then use the `for` keyword. We put the method signature inside and fill the method body
+- We can't implement external traits on external types. This restriction is part of a property called **coherence** and the **orphan rule**, because the parent type is not present. This ensures that other people's code can't break your code and vie cersa.
 
 ## Other Useful Commands
 - Run doc for a project overview: `cargo doc --open --no-deps`
