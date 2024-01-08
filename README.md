@@ -612,6 +612,39 @@ enum Result<T, E> {
 - Implementing a trait on a type: `impl Summary for Tweet {...}` we put the trait name and then use the `for` keyword. We put the method signature inside and fill the method body
 - We can't implement external traits on external types. This restriction is part of a property called **coherence** and the **orphan rule**, because the parent type is not present. This ensures that other people's code can't break your code and vie cersa.
 
+#### Default Implementations
+- We can have default behaviour for some or all of the methods in a trait instead of requiring implementations for all methods on every type. Then, as we implement the trait on a particular type we can keep or override each method's default behaviour.
+- Default implementations can call other methods in the same trait, even if those other methods don't have a default implementation
+
+#### Traits as Parameters
+- A parameter that accepts any type that implements the specified trait: `pub fn notify(item: &impl Summary) {...}`.
+- This is syntatic sugar for a longer form known as **trait bound**, which looks like: `pub fn notify<T: Summary>(item: &T) {...}`. 
+- We can use the impl Summary if we have 2 parameters that implement Summary and we want to have different types, as long as both types implement Summary: `pub fn notify(item1: &impl Summary, item2: &impl Summary) {...}`
+- If we want to force both parameters to have the same type, however, we must use a trait bound like this: `pub fn notify<T: Summary>(item1: &T, item2: &T)`
+
+#### Multiple Trait Bounds with the + Syntax
+```
+pub fn notify(item: &impl(Summary + Display)) {}
+pub fn notify <T: Summary + Display>(item: &T)
+```
+
+#### Clearer Trait Bounds with the 'where' clause
+- If there are too  many trait bounds, the function signature is hard to read
+- Trait bounds can be specified using `where` clause after the function signature
+
+#### Returning Types that implement Traits
+- We can specify a return type only by the trait it implements `fn returns_summarizable() -> impl Summary {}`
+- However, you can only use impl Trait if you are returning a single type.
+
+#### Using Trait Bounds to Conditionally Implement Methods
+- Implementations of a trait on any type that satisfies the trait bounds are called **blanket implementations**. They are commonly used in the standard library. Ex: the `ToString` trait is implemented on any type that implements the `Dsiplay` trait:
+`impl<T: Display> ToString for T {..}`
+- So we can call the `to_string` method defined by the `ToString` trait on any type that implements the `Display` trait. Ex: we can turn integers into their corresponding `String` values: `let s= 3.to_string()`
+
+
+### Validating References with Lifetimes
+
+
 ## Other Useful Commands
 - Run doc for a project overview: `cargo doc --open --no-deps`
 - Run tests: `cargo test --release test_merkle_tree`
