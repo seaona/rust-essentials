@@ -643,7 +643,27 @@ pub fn notify <T: Summary + Display>(item: &T)
 
 
 ### Validating References with Lifetimes
+- Lifetimes ensure that references are valid as long as we need them to be
+- Every reference in Rust has a lifetime, which is teh scope for which that reference is valid.
+- Most lifetimes are implicit and inferred, we must annotate lifetimes when the lifetimes of references could be related in a few different ways
 
+#### Preventing Dangling References with Lifetimes
+- The main aim of lifetimes is to prevent dangling references, which cause a program to reference data other than the data it's intended to reference.
+
+#### The Borrow Checker
+- The Borrow Checker compares scopes to determine whether all borrows are valid
+
+#### Lifetime Annotation Syntax
+- The names of lifetime parameters must start with an apostrophe `'` and are usually lowercase and very short. Most people use `'a` for the first annotation.
+```
+&i32 // a reference
+&'a i32 // a reference with an explicit lifetime
+&'a mut i32 // a mutable reference with an explicit lifetime
+```
+#### Thinking in Terms of Lifetimes
+- When returning a reference from a function, the lifetime parameter for the return type needs to match the lifetime parameter for one of the parameters. If the reference returned does not refer to one of the parameters, it must refer to a value created within this function. However, this would be a dangling reference because the value will go out of scope at the end of the function. 
+
+#### Lifetime Annotation in Struct Definitions
 
 ## Other Useful Commands
 - Run doc for a project overview: `cargo doc --open --no-deps`
