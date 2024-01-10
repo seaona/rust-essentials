@@ -664,6 +664,28 @@ pub fn notify <T: Summary + Display>(item: &T)
 - When returning a reference from a function, the lifetime parameter for the return type needs to match the lifetime parameter for one of the parameters. If the reference returned does not refer to one of the parameters, it must refer to a value created within this function. However, this would be a dangling reference because the value will go out of scope at the end of the function. 
 
 #### Lifetime Annotation in Struct Definitions
+- We can define structs to hold refeences, but in that case, we would need to add a lifetime annotation on every reference in the struct's definition
+
+
+#### Lifetime Elision
+- Every reference has a lifetime and you need to specify lifetime parameters for functions or structs that use references.
+- However, not always is necessary, as the borrow checker can infer the lifetimes in some situations and don't need explicit annotations. This is known as **lifetime elision rules**
+- The elision rules don't provide full inference.
+- **Input lifetimes**: lifetimes on function or method parameters
+- **Output lifetimes**: lifetimes on return values
+- Rules to figure out the lifetimes, applied to `fn` definitions and `impl` blocks:
+    - Rule 1: the compiler assigns a lifetime parameter to each parameter that's a reference. A func with 1 parameter, get's one lifetime parameter `fn foo<'<>(x: &'< i32)`, a func with 2 parameters, gets two separate lifetime parameters `fn foo<'a, 'b>(x: &'a i32, y: &'b i32)`
+    - Rule 2: if there is exactly one input lifetime parameter, that lifetime gets assigned to all output lifetime parameters `fn foo<'a>(x: &'a i32) -> &'a i32`
+    - Rule 3: if there are multiple input lifetime parameters, but one of them is `&self` or `&mut self`, because this is a method, the lifetime of `self` is assigned to all output lifetime parameters.
+
+#### Lifetime Annotations in Method Definitions
+- Lifetime names for struct fields always need to be declared after the `impl` keyword and then used after the struct's name, because those lifetimes are part of the struct's type `impl<'a> ImportantExcerpt<'a> {}`
+
+#### The Static Lifetime
+- `'static` denotes that the affected reference can live for the entire duration of the program. All string literals have the `'static` lifetime: `let s: &'static str = "I have a static lifetime"`.
+- The text in the string is stored directly in the program's binary, which is always available.
+
+### 11. Write Automated Tests
 
 ## Other Useful Commands
 - Run doc for a project overview: `cargo doc --open --no-deps`
