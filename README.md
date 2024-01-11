@@ -686,6 +686,31 @@ pub fn notify <T: Summary + Display>(item: &T)
 - The text in the string is stored directly in the program's binary, which is always available.
 
 ### 11. Write Automated Tests
+- A test is a function that's annotated with the`test` attribute. Attributes are metadata about pieces of Rust code
+- Add `#[test]` on the line before the `fn`
+- When we make a new library project, a test module with a test function in it is automatically generated for us. `cargo new adder --lib`
+- We might also want to have non-test functions in the `tests` module, to help set up common scenratios or perform operations
+- To run tests `cargo test`
+- There are benchmark tests, documentation tests..
+- Tests fail when something in the test function panics
+
+#### Checking Results with the `assert!` Macro
+- The `assert!` macro, provided by the standard library, is useful when you want to ensure that some condition in a test evaluates to `true`. If the value is true, nothing happens, if is false, the macro calls `panic!` to cause the test fail.
+
+#### Testing Equality with `assert_eq!` and `assert_ne!` Macros
+- These macros compare two arguments for equality or inequality respectively
+- The values being compared must implement the `PArtialEq` and `Debug` traits. All primitive types and most of the standard library types implement these traits. For structs and enums that you define yourself **you'll need to implement `PartialEq` and `Debug`** by adding `[#derive(PartialEq, Debug)]`
+
+#### Adding Custom Failure Messages
+- You can add a custom message to be printed with the failure method, as an optional argument to the `assert!`, `assert_eq!` and `assert_ne!`
+
+#### Checking for Panics with `should_panic`
+- We place the `#[should_panic]` attribute after the `#[test]` attribute and before the test function it applies to
+- Tests that use should_panic can be imprecise, as they can panic for a different reason from the one we were expecting, so we can add an optional `expected` parameter to the `should_panic` attribute
+
+#### Using `Result<T, E>` in Tests
+- Writing tests so they return a `Result<T, E>` enables you to use the question mark operator in the body of tests
+- You can't use the `#[should_panic]` annotation on tests that use `Result<T, E>`
 
 ## Other Useful Commands
 - Run doc for a project overview: `cargo doc --open --no-deps`
