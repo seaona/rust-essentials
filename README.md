@@ -712,6 +712,39 @@ pub fn notify <T: Summary + Display>(item: &T)
 - Writing tests so they return a `Result<T, E>` enables you to use the question mark operator in the body of tests
 - You can't use the `#[should_panic]` annotation on tests that use `Result<T, E>`
 
+
+### Controlling How Tests are Run
+- `cargo test` compiles the code in test mode and runs the resulting test binary
+- the default behaviour is to run all test in parallel and capture output related to the test results (not print, unless test fails)
+- You can pass command line options `cargo test --help`
+
+#### Running Tests in Parallel or Consecutively
+- Tests should not depend on each other or on any shared tate, including a shared environment, such as the current working directory or environment varaibles
+- To control over the number of threads used, you can send the `test-threads` flag and the number of threads you want to use `cargo test -- --test-threads=1` (ie. to not use parallelism)
+
+#### Showing Function Output
+- By default, if the test passes, we won't see any `println!` output in the terminal, only if the test fails
+- To see the printed values `cargo test -- --show-output`
+
+#### Running a Subset of Tests by Name
+- To run a single test `cargo test TEST_FUNC_NAME`, the rest appear as filtered out
+- To run multiple tests, w can specify part of a test name, and any test whose name matches that value will be run. I.e. `cargo test add`
+- To ignore a few specific tests you can exclude them by adding the `#[ignore]` line to the test we want to exclude
+- To run only ignored tests we can run `cargo test -- -ignored` and to run all of them (ignored and not) `cargot test -- --include-ignored`
+
+#### Test Organization
+- **Unit Tests**: small and focues, testing one module in isolation at a time, and can test private interfaces
+    - You'll put unit tests in the `src` directory in each file with the code that they're testing
+    - The convetion is to create a module named `tests` in each file to contain the test functions and to annotate the module with `cfg(test)`
+    - The `#[cfg(test)]` tells Rust to compile and run the test code only when you run `cargo test` and not when you run `cargo build`. This saves compile time and saves space in the resulting compile artifact because tests are not included
+    - Because integration tests go in a different directory, they don't need the `#[cfg(test)]` annotation, but since unit tests go in the same files as the code, you need it, so they are excluded in the compiled result
+    - `cfg` means configuration, and tells that the item should only be included given a certain configuration option
+    - Testing private functions: we can bring the module's parent's items into scope with `use super::*` and then call the private function
+
+- **Integration Tests**: entirely external to your library and use you rcode in the same way any other external code would, using only the public interface and potentially exercising multiple modules per test
+
+
+
 ## Other Useful Commands
 - Run doc for a project overview: `cargo doc --open --no-deps`
 - Run tests: `cargo test --release test_merkle_tree`
