@@ -742,8 +742,14 @@ pub fn notify <T: Summary + Display>(item: &T)
     - Testing private functions: we can bring the module's parent's items into scope with `use super::*` and then call the private function
 
 - **Integration Tests**: entirely external to your library and use you rcode in the same way any other external code would, using only the public interface and potentially exercising multiple modules per test
-
-
+    - You need a `tests` directory at the top level of the project, next to `src`
+    - We can make as many test files as we want i.e. `integration_test.rs`
+    - We don't need to annotate any code with `#[cfg(test)]`
+    - We run `cargo test` and it will run: unit tests, integration tests and documentation tests. If a unit test fails, it won't continue running subsequent tests
+    - To ruin all the tests in a particular integration test file `cargo test --test intergation_test`
+    - If we have common functions for test setup, we don't won't them to appear in the test report, so we create it like `tests/common/mod.rs`
+    - Files in subdirectories of the `tests` directory don't get compiled as separate crates or have sections in the test output
+    - If our project is a binary crate that only contains a `src/main.rs` file and doesn't have a `src/lib.rs` file, we can't create integration tests in the `tests` directory and bring functions defined in the `src/main.rs` file into scope with a `use` statement. Only library crates expose functions that other crates can use. If the important functionality works, the small amount of code in the `src/main.rs` file will work as well, and that small amount of code doesn't ned to be tested
 
 ## Other Useful Commands
 - Run doc for a project overview: `cargo doc --open --no-deps`
