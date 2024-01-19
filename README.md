@@ -751,6 +751,15 @@ pub fn notify <T: Summary + Display>(item: &T)
     - Files in subdirectories of the `tests` directory don't get compiled as separate crates or have sections in the test output
     - If our project is a binary crate that only contains a `src/main.rs` file and doesn't have a `src/lib.rs` file, we can't create integration tests in the `tests` directory and bring functions defined in the `src/main.rs` file into scope with a `use` statement. Only library crates expose functions that other crates can use. If the important functionality works, the small amount of code in the `src/main.rs` file will work as well, and that small amount of code doesn't ned to be tested
 
+### Printing Errors to Standard Error
+- Errors should not be included in the standard output, but to the standard error instead.
+- `eprintln!("Problem")`: this macro prints to the standard error stream, so only data from successul run ends up in the output file -. not errors.
+
+
+### 13. Functional Language Features: Iterators and Closures
+
+
+
 ## Other Useful Commands
 - Run doc for a project overview: `cargo doc --open --no-deps`
 - Run tests: `cargo test --release test_merkle_tree`
@@ -758,3 +767,5 @@ pub fn notify <T: Summary + Display>(item: &T)
 - Run a Rust formatter `cargo fmt`
 - Run a bunch of lints to catch common mistakes `cargo clippy`
 - There's no reason to declare your variables early in the function. That's the kind of thing you would do in very old C or JavaScript and isn't required in modern languages. Declare them as late as possible.
+- Run a program with 1 envar and 2 arguments: `IGNORE_CASE=1 cargo run -- to poem.txt`
+- Write the contents to a file `cargo run > output.txt`
