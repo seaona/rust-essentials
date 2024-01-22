@@ -757,7 +757,16 @@ pub fn notify <T: Summary + Display>(item: &T)
 
 
 ### 13. Functional Language Features: Iterators and Closures
-
+#### Clousures; Anonymous Functions that Capture Their Environment
+- Closures are anonymous functions you can save in a variable or pass as arguments to other functions
+- You can create a closure in one place and call the closure elsewhere to evaluate it in a different context
+- Closures can capture values from the scope in which they're defined
+- Closures don't usually require you to annotate the types of the params or the return values like functions do
+- Closures are typically short and relevant only within a narrow context rather than in any arbitrary scenario. Within this limited contexts, the compiler can infer the types
+- Closures will automatically implement one, two or all three of these `Fn` traits, in an additive fashion:
+    1. `FnOnce`: applies to closures that can be called once. All closures implement this trait. A closure that moves captured values out of its body will only implement `FnOnce` and none of the other `Fn` traits
+    2. `FnMut`: applies to closures that don't move captured values out of their body, mut that might mutate the caputred values. They can be called more than once
+    3. `Fn`: applies to closures that don't move captured values out of their body and don't mutate captured values, as well as closures that capture nothing from their environment
 
 
 ## Other Useful Commands
