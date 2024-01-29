@@ -2,12 +2,10 @@ use std::env;
 use std::process;
 use minigrep::Config;
 
-fn main() {
-    // we need to annotate types bc Rust isn't able to infer the kind of collection you want
-    let args: Vec<String> = env::args().collect();
-    
+fn main() {   
+    // env::args function returns an iterator
     // unwrap_or_else method is defgined on Result<T, E> by the standard library
-    let config = Config::build(&args).unwrap_or_else(|err| {
+    let config = Config::build(env::args()).unwrap_or_else(|err| {
         eprintln!("Problem parsing arguments: {err}");
         
         // stops the program immediately and returns the number that we passed as exit code

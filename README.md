@@ -768,6 +768,20 @@ pub fn notify <T: Summary + Display>(item: &T)
     2. `FnMut`: applies to closures that don't move captured values out of their body, mut that might mutate the caputred values. They can be called more than once
     3. `Fn`: applies to closures that don't move captured values out of their body and don't mutate captured values, as well as closures that capture nothing from their environment
 
+#### Processing a Series of Items with Iterators
+- Methods that call `next` are called **consuming adaptors**, because calling them consumes up the iterator.
+- One example is the `sum` method, which takes ownership of the iterator and iterates through the items by repeatedly calling `next`, thus consuming the iterator. As iterates through, it adds each item to a running total and returns the total when the iteration is complete
+- **Iterators adaptors** are methods defined on the `Iterator` trait that don't consume the iterator. Instead, they produce different iterators by changing some aspect of the original iterator. They are lazy, and we need to consume the iterator.
+
+#### Comparing Performance: Loops vs Iterators
+- Run a benchmark to see which one is faste: using `for` loop or iterators
+- Iterators were a bit faster
+- Rust unrolls the loop, is an optimization that removes the overhead of the loop controlling code and instead generates repetitive code for each iteration of the loop
+- You can add/override any subset of the default settings, in `Cargo.toml` by adding `[profile.*]`
+
+### 14. More About Cargo and Crates.io
+- **Release Profiles** are predefined and customizable profiles with different configurations that allow to have more control over various options for compiling code.
+- Cargo has 2 main profiles: the `dev` profile, when you run `cargo build` and the `release` profile, when you run `cargo build --release`
 
 ## Other Useful Commands
 - Run doc for a project overview: `cargo doc --open --no-deps`

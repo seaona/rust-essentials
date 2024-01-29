@@ -11,13 +11,27 @@ pub struct Config {
 
 impl Config {
     // error values will always be string literals that have the 'static lifetime
-    pub fn build(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 3 {
-            return Err("not enough arguments");
-        }
 
-        let query = args[1].clone();
-        let file_path = args[2].clone();
+    // args can be any type that implements the Iterator type and returns String items
+    pub fn build(
+        mut args: impl Iterator<Item = String>,
+    ) -> Result<Config, &'static str> {
+
+        // the 1st value of args is the name of the program
+        // we ignore that and get to the next value, so we first call next and do nothing
+        // with the return value
+        args.next();
+
+        let query = match args.next() {
+            Some(arg)=> arg,
+            None => return Err("Didn't get a query string"),
+        };
+
+
+        let file_path = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a file path"),
+        };
 
         // we check if the envar is set -- don't care about the value here
         let ignore_case = env::var("IGNORE_CASE").is_ok();
@@ -53,14 +67,10 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 // the reutrn vector should contain string slices that reference slices on the argument contents
 // the data returned will live as long as the data passed into the search func in the contents argument
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut results = Vec::new();
-
-    for line in contents.lines() {
-        if line.contains(query) {
-            results.push(line);
-        }
-    }
-    results
+    contents
+        .lines()
+        .filter(|line| line.contains(query))
+        .collect()
 }
 
 pub fn search_case_insensitive<'a>(
