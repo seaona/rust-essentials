@@ -780,8 +780,25 @@ pub fn notify <T: Summary + Display>(item: &T)
 - You can add/override any subset of the default settings, in `Cargo.toml` by adding `[profile.*]`
 
 ### 14. More About Cargo and Crates.io
+#### Publishing a Crate
 - **Release Profiles** are predefined and customizable profiles with different configurations that allow to have more control over various options for compiling code.
 - Cargo has 2 main profiles: the `dev` profile, when you run `cargo build` and the `release` profile, when you run `cargo build --release`
+- **Documentation comments**: will generate HTML documentation. They use three slashes `///` and support Markdown notation for formatting text
+- We can generate the documentation running `cargo doc` and `cargo doc --open`
+- Usually crate authors document: panics, errors and safety
+- Running `cargo test` will run the code examples in your documentation as tests
+- `//!` adds documentation to the item that contains the comments rather than to the items following the comments
+- **Reestructuring the organization** for public se. You don't have to re-arrange the internal organization, but can use `pub use` to re-export items to make a public structure different than your private structure
+- **Publishing crates**: login with the API key `cargo login API_KEY`
+- **Yanking a crate version**: prevents new projects from depending on that version while allowing all existing projects that depend on it to continue. `cargo yank --vers 1.0.1` and to undo it you can run `cargo yank --vers 1.0.1 --undo`
+
+#### Cargo Workspaces
+- A Workspace is a set of packages that share the same `Cargo.lock` and output directory
+- Run a package from the workspace directory `cargo run -p adder`
+- To run all tests, just run `cargo test` in the top level of the workspace. To run tests from a particular package in the workspace pass a flag like `cargo test -p add_one`
+- To install external packages `cargo install ripgrep`
+
+### 15. Smart Pointers
 
 ## Other Useful Commands
 - Run doc for a project overview: `cargo doc --open --no-deps`
