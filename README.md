@@ -799,6 +799,16 @@ pub fn notify <T: Summary + Display>(item: &T)
 - To install external packages `cargo install ripgrep`
 
 ### 15. Smart Pointers
+- Smart pointers are data structures that act like a pointer but also have additional metadata and capabilities.
+- **Reference counting** smart pointer: enables to allow data to have multiple owners by keeping track of the number of owners and, when no owners remain, clean up the data
+- While references only borrow data, in many cases, smart pointers own the data they point to
+- Ex. `String` and `Vec<T>` are smart pointers because they own some memory and allow you to manipulate it. They also have metadata and extra capabilities or guarantees (i.e. String stores its capacity as metadata and has the extra ability to ensure its data will always be valid UTF-8)
+- Smart pointers are implemented using structs, but implement `Deref` and `Drop` traits
+    - `Deref` trait: allows an instance of the smart pointer struct to behave like a reference so you can write your code to work with either references or smart pointers
+    - `Drop` trait: allows you to customize the code that's run when an instance of the smart pointer goes out of scope 
+
+#### 15.1 Using Box<T> to Point to Data on the Heap
+
 
 ## Other Useful Commands
 - Run doc for a project overview: `cargo doc --open --no-deps`
