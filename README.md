@@ -808,6 +808,23 @@ pub fn notify <T: Summary + Display>(item: &T)
     - `Drop` trait: allows you to customize the code that's run when an instance of the smart pointer goes out of scope 
 
 #### 15.1 Using Box<T> to Point to Data on the Heap
+- `Box<T>` is a smart pointer that allows to store data on the heap rather than the stack. What remains on the stack is the pointer to the heap data.
+- They don't have performance overhead, other than storing their data on the heap instead of on the stack, but they don't have many extra capabilities. Use cases
+    - When you have a type whose size can't be known at compile time, and you want to use a value of that type in a context that requires the exact size
+    - When you have a large amount of data and you want to transfer ownership but ensure the data won't be copied when you do so
+    - When you want to own a value and you care only that it's a type that implements a particular trait rather than being of a specific type
+- When it goes out of scope, the deallocation happens both for the box (stored in the stack) and the data it points to (stored on the heap)
+- **Recursive Types**: we can enable recursive types by instering a box in the recursive type definition
+    - **Cons List**: a data structure, made up of nested pairs: the value of the current item and the next item. The last item contains only a value called `Nil` without next item. I.e. `(1, (2, (3, Nil)))`
+
+#### 15.2 Treating Smart Pointers like Regular References with Deref Trait
+- Implementing the `Deref` trait allows to customize the behaviour of the dereference operator `*`. You can write code that operates on references and use that code with smart pointers too
+- **Deref coercion**: converts a reference to a type that implements the `Deref` trait into a reference to another type. For example, deref coercion can convert `&String` to `&str` because `String` implements the `Deref` trait
+- You can use `DerefMut` trait to override the * operator on mutable references
+- Rust does deref coercion when it find types and trait implementaitons in 3 cases:
+    - From `&T` to `&U` when `T: Deref<Target=U>`
+    - From `&mut T` to
+
 
 
 ## Other Useful Commands
