@@ -825,6 +825,27 @@ pub fn notify <T: Summary + Display>(item: &T)
     - From `&T` to `&U` when `T: Deref<Target=U>`
     - From `&mut T` to
 
+#### 15.3 Running Code on Cleanup with the Drop Trait
+- `Drop` trait, which lets customize what happens when a value is about to go out of scope. You can provide an implementation for the `Drop` trait on any type, and that code can be used to release resources like files or network connections
+- The functionality of the `Drop` trait is almost always used with smart pointers. I.e. when a `Box<T>` is dropped it will dellocate the space on the heap that the box points to
+- The `Drop` trait requires to implement one method named `drop` that takes a mutable reference to `self`. 
+- The `Drop` trait is included in the prelude, so we don't need to bring it into scope.
+- Values are dropped in the reverse order of creation
+- The `drop` method is called automatically, you cannot call `drop` manually, because Rust will still call it at the end of main, and would cause a **doulbe free** error, because Rust would be trying to clean up the same value twice
+- Occasionally you want to clean up a value earlier: ex. when using smart pointers that manage locks - you might want to force the `drop` method that releases the lock so that other code in the same scope can acquire the lock.
+- If you want to call `drop`, you need to do this instead: call the `std::mem::drop` function provided by the standard library
+
+#### 15.4 Rc<T>, the Reference Counted Smart Pointer
+- **Reference Counting**: to enable multiple ownership explicitly
+- `Rc` keeps track of the number of references to a value to determine whetehr or not the value is still in use. If there are zero references to a value, the value can be cleaned up without any references becoming invalid
+- We use the `Rc<T>` type when we want to allocate some data on the heap for multiple parts of our program to read and we can't determine at compile time which part will finish using the data last
+- `Rc<T>` is only for use in single-threaded scenarios
+
+#### 15.5 RefCell<T> and the Interior Mutability Pattern
+- **Interior mutability** is a design pattern that allows to mutate data even when there are immutable references to that data; normally this action is disallowed by the borrowing rules
+- To mutate data, the pattern uses `unsafe` code inside a data structure, to bend Rust's usual rules that govern mutation and borrowing. Unsafe code indicates to the compiler that we're checking the rules manually instead of relying on the compiler
+
+
 
 
 ## Other Useful Commands
