@@ -844,9 +844,21 @@ pub fn notify <T: Summary + Display>(item: &T)
 #### 15.5 RefCell<T> and the Interior Mutability Pattern
 - **Interior mutability** is a design pattern that allows to mutate data even when there are immutable references to that data; normally this action is disallowed by the borrowing rules
 - To mutate data, the pattern uses `unsafe` code inside a data structure, to bend Rust's usual rules that govern mutation and borrowing. Unsafe code indicates to the compiler that we're checking the rules manually instead of relying on the compiler
+- The `RefCell<T>` type represents a single ownership over the data it holds. The borrowing rules were:
+    - at any given time, you can have either (but not both) one mutable reference or any number of immutable references but not both
+    - references must always be valid
+- The `Box<T>` enforces the borrowing rules invariants at compile time. If you break them, you get a compiler error
+- The `RefCell<T>` enforces them at runtime. If you break them, your program will panic and exit
+- Static analysis, like the Rust compiler, is inherently conservative. So if it can't be sure the code compiles with the ownership rules, it might reject a program.
+- `RefCell<T>` is only for use in single-threaded scenarios and will give you a compile-time error if you try to use it in a multithreaded context
+- **Interior Mutability**: when you can mutate a value in its methods but appear immutable to other code. Case: Mock Objects
+- When creating immutable and mutable references, we use the `&` and the `&mut` syntax respectively. With `RefCell<T>` we use `borrow` and `borrow_mut` methods, which are part of the safe API that belongs to RefCell
+- You can have multiple owners of mutable data by combining `Rc<T>` and `RefCell<T>`
 
-
-
+#### 15.6 Reference Cycles can Leak Memory
+- It is possible to create references where items refer to each other in a cycle, using `Rc<T>` and `RefCell<T>`. This creates memory leaks
+- **Weak References**: don't express ownership relationship, and their current count doesn't affect when an `Rc<T>` instance is cleaned up. You can create a weak reference to the value by calling `Rc::downgrade`. 
+- Calling `Rc::downgrade` increases the `weak_count` by 1 and weak_count doesn't have to be 0 for the `Rc<T>` instance to be cleaned up
 
 ## Other Useful Commands
 - Run doc for a project overview: `cargo doc --open --no-deps`
