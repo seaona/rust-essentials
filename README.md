@@ -860,6 +860,8 @@ pub fn notify <T: Summary + Display>(item: &T)
 - **Weak References**: don't express ownership relationship, and their current count doesn't affect when an `Rc<T>` instance is cleaned up. You can create a weak reference to the value by calling `Rc::downgrade`. 
 - Calling `Rc::downgrade` increases the `weak_count` by 1 and weak_count doesn't have to be 0 for the `Rc<T>` instance to be cleaned up
 
+
+
 ## Other Useful Commands
 - Run doc for a project overview: `cargo doc --open --no-deps`
 - Run tests: `cargo test --release test_merkle_tree`
