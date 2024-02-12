@@ -862,9 +862,52 @@ pub fn notify <T: Summary + Display>(item: &T)
 
 ### 16. Fearless Concurrency
 #### 16.1 Using Threads to Run Code Simultaneously
+- In OS, an executed program's code is run in a process, and the OS will manage multiple processes at once
+- Within a program, you can also have independent parts that run simultaneously. The features that run these independent parts are called threads
+- It can improve performance but increase complexity. Problems:
+    - **Race conditions**: threads are accessing data or resources in an inconsistent order
+    - **Deadlocks**: two threads are waiting for each other, preventing both threads from continuing
+    - Bugs that happen only in certain situations an are hard to reproduce and fix reliably
+- To create a new thread we call the `thread::spawn` function
+- The return type of `thread::spawn` is `JoinHandle`, an owned value, that when we call the `join` method on it, will wait for its thread to finish
+- We'll use `move` with `swpan` because the closure will then take ownership of the values it uses from the environment, thus transferring ownership of those values from one thread to another
 
+#### 16.2 Usin Message Passing to Transfer Data Between Threads
+- **Message passing**: threads communicate by sending each other messages containing data
+- **Channel**: a concept in which data is sent from one thread to another. It has 2 halves:
+    - **Transnmitter**: one part of the code, calls methods on the transmitter with the data you want to send
+    - **Receiver**: checks the receiving end for arribing messages
+- A channel is closed if either the transmitter or the receiver half is dropped
 
+#### 16.3 Shared-State Concurrency
+- Shared memory concurrency is like multiple ownership: multiple threads can access the same memory location at the same time
+- **Mutex**: mutual exclusion, allows only on thread to access some data at any given time. To access the data, the thread must first signal that it wants access by asking to acquire the mutex's lock.
+- **Lock**: is a data structure that is part of the mutex that keeps track of who currently has exclusive access to the data.
+- Two rules for using mutex:
+    - you must attemps to acquire the lock before using the data
+    - when you are done with the data that the mutex guards, you must unlock the data so other threads can acquire the lock
+- **Atomic References**: `Arc<T>` is a type like `Rc<T>` that is safe to use in concurrent situations
 
+#### 16.4 Extensible Concurrency with Sync and Send Traits
+- **Allowing Transference of Ownership Between Threads with Send**: the `Send` marker trait indicates that ownership of values of the type implementing `Send` can be transferred between threads. Almost every Rust type is `Send`, but there are some exceptions like `Rc<T>`
+- **Allowing Access from multiple Threads with Sync**: the `Sync` marker trait indicates that it is safe for teh type implementing `Sync` to be referenced from multiple threads. The smart pointer `Rc<T>` is also not `Sync`
+- We don't have to implement `Send` and `Sync` manually - it's unsafe
+
+### 17. Object Oriented Programming Features of Rus
+#### 17.1 Characteristics of Object-Oriented Languages
+- An object packages both data and the procedures that operate on that data (methods/operations). Rust have `impl` blocks that provide methods on structs and enums
+- The implementation details of an object aren't accessible to code using that object (encapsulation). The only way to interact with an object is through its public API
+- Inheritance as a Type System and as Code Sharing: in Rust, there is no way to define a struct that inherits the parent struct's fields and method implementations without using a macro. Reasons for using inheritence:
+    - to reuse code: you can implement particular behaviour for one type, and inheritence enables you to reuse that implementation for a different type
+    - to enable a child type to beb used in the same places as the parent type: **polymorphism** - you can substitute multiple objects for each other at runtime if they share certain characteristics
+- Rust instead uses generics to abstract over different possible types and trait bounds to impose contraints on what those types must provide. This is called **bounded parametric polymorphism**
+- Inheritance has fallen out of favour because it's often a risk of sharing more code than necessary. Subclasses shouldn't always share all characteristics of their parent class. For these reasons, Rust uses trait objects instead of inheritance.
+
+#### 17.2 Using Trait Objects that Allow for Values of Different Types
+- A **trait object** points to both an instance of a type implementing our specified trait and a table used to look up trait methods on that type at runtime
+- We can't add data to a trait object. Their specific purpose is to allow abstraction across common behaviour
+
+#### 17.3 Implementing an Object-Oriented Design Pattern
 
 ## Other Useful Commands
 - Run doc for a project overview: `cargo doc --open --no-deps`
