@@ -908,6 +908,12 @@ pub fn notify <T: Summary + Display>(item: &T)
 - We can't add data to a trait object. Their specific purpose is to allow abstraction across common behaviour
 
 #### 17.3 Implementing an Object-Oriented Design Pattern
+- **The state pattern**: we define a set o states a value can have internally. The states are represented by a set of state objects, and teh value's behaviour changes based on its state
+- The state objects share functionality: in Rust, we use structs and traits rather than objects and inheritance.
+- Each state is responsible for its own behaviour and for governing when it should change into another state.The value that holds a state object knows nothing about the different behaviour of the states or when to transition between states
+
+### 18. Patterns and Matching
+
 
 ## Other Useful Commands
 - Run doc for a project overview: `cargo doc --open --no-deps`
