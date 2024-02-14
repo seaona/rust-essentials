@@ -913,6 +913,26 @@ pub fn notify <T: Summary + Display>(item: &T)
 - Each state is responsible for its own behaviour and for governing when it should change into another state.The value that holds a state object knows nothing about the different behaviour of the states or when to transition between states
 
 ### 18. Patterns and Matching
+- **Patterns** are a special syntax in Rust for matching against the structure of types. A pattern consists of some combination of the following:
+    - Literals
+    - Destructed arrays, enums, structs, tuples
+    - Variables
+    - Wildcards
+    - Placeholders
+- To use a pattern, we compare it to some value. If the pattern matches the value, we use the value parts in our code
+
+#### 18.1 All the Places Patterns Can Be Used
+- **match Arms**: they need to be ***exhaustive**, meaning all the possibilities for the value in the match expression must be accounted for. One way to ensure this is to have a **catchall** pattern for the last arm. The `_` will match anything, but it never binds to a variable, so it's often used in the last arm
+- **Conditional if let Expressions**: as a shorter way to write the equivalent of a match that only matches one case. Optionally, `if let` can have a corresponding `else` containing code to run if the pattern in the `if let` doesn't match. However, the compiler doesn't check for exhaustiveness here
+- **while let Conditional Loops**: a while loop that runs as long as a pattern continues to match
+- **for Loops**: the value that directly follows the keyword `for` is a pattern
+- **let Statements**: `let PATTERN = EXPRESSION` for example `let (x, y, z) = (1, 2, 3);`
+- **Function Parameters**: they can also be patterns
+
+#### 18.2 Refutability: Whether a Pattern Might Fail to Match
+- **Irrefutable**: patterns that will match for any possible value passed. I.e. `let x = 3`, because x matches anything and therefore cannot fail to match. They are: function parameters, `let` statements and `for` loops
+- **Refutable**: patterns that can fail to match for some possible values. I.e. `if let Some(x) = a_value` because if the value in the `a_value` variable is `None` rather than `Some`, the `Some(x)` pattern will not match
+- The `if let` and `while let` expressions can accept refutable and irrefutable patterns, but the compiler warns against the irrefutable patterns
 
 
 ## Other Useful Commands
@@ -923,4 +943,4 @@ pub fn notify <T: Summary + Display>(item: &T)
 - Run a bunch of lints to catch common mistakes `cargo clippy`
 - There's no reason to declare your variables early in the function. That's the kind of thing you would do in very old C or JavaScript and isn't required in modern languages. Declare them as late as possible.
 - Run a program with 1 envar and 2 arguments: `IGNORE_CASE=1 cargo run -- to poem.txt`
-- Write the contents to a file `cargo run > output.txt`
+- Write the contents to a file `cargo run > output.txt` 
