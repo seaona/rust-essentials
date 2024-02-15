@@ -934,6 +934,9 @@ pub fn notify <T: Summary + Display>(item: &T)
 - **Refutable**: patterns that can fail to match for some possible values. I.e. `if let Some(x) = a_value` because if the value in the `a_value` variable is `None` rather than `Some`, the `Some(x)` pattern will not match
 - The `if let` and `while let` expressions can accept refutable and irrefutable patterns, but the compiler warns against the irrefutable patterns
 
+### 19. Advanced Features
+#### 19.1 Unsafe Rust
+
 
 ## Other Useful Commands
 - Run doc for a project overview: `cargo doc --open --no-deps`
