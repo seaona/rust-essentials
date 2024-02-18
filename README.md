@@ -936,6 +936,26 @@ pub fn notify <T: Summary + Display>(item: &T)
 
 ### 19. Advanced Features
 #### 19.1 Unsafe Rust
+- Rust has a second language hidden inside it that doesn't enforce memory safety guarantees, it's called Unsafe Rust and gives superpowers:
+    - dereference a raw pointer
+    - call an unsafe function or method
+    - access or modify a mutable static variable
+    - implement an usnafe trait
+    - access fields of `union`s
+- You'll still get some degree of safety inside an unsage block, since the borrow checker is still enabled
+- It's best to enclose unsafe code within a safe abstraction and provide a safe API. Parts of the standard library are implemented as safe abstractions over unsafe code that' has been audited
+- **Dereferencing a Raw Pointer**: raw pointers can be immutable or mutable and are written as `*const T` and `*mut T` respectively. The asterisk isn't the dereference operator, it's part of the type name. Immutable here means that the pointer can't be directly assigned to after being dereferenced. Raw pointers:
+    - are allowed to ignore teh borrowing rules by having both immutable and mutable pointers or multiple mutable pointers to the same location
+    - aren't guaranteed to point to valid memory
+    - are allowed to be null
+    - don't implement any automatic cleanup
+- **Calling an unsafe function or method**: they look like regular functions but have an extra `unsafe` before the rest of the definition. It indicates that the functions has requirements we need to uphold when we call this function
+- **Using extern Functions to Call External Code**: if we need to interact with code written in another language, Rust has the keyword `extern` that facilitates and use of a Foreign Function Interface (FFI)
+- **Accessing or Modifying a Mutable Static Variable**: in Rust, global variables are called static variables. Static variables can only stora references with the `'static` lifetime, which means te Rust compiler can figure out the lifetime and we aren't required to annotate explicitly. Accessing an immutable static variable is safe. A difference from constants, is that static variables have a fixed address in memory. Constants, on the other hand, are allowed to duplicate their data whenever they're used. Also static variables can be mutable. Accessing and modifying mutable static variables is unsafe
+- **Implementing an Unsafe Trait**: a trait is unsafe when at least one of its methods has some invariant that the compiler can't verify
+- ** Accessing fields of a union**: a union is similar to a struct, but only one declared field is used in a particular instance at one time.
+
+#### 19.2 Advanced Traits
 
 
 ## Other Useful Commands
