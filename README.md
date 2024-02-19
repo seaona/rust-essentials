@@ -956,7 +956,13 @@ pub fn notify <T: Summary + Display>(item: &T)
 - ** Accessing fields of a union**: a union is similar to a struct, but only one declared field is used in a particular instance at one time.
 
 #### 19.2 Advanced Traits
-
+- **Associated Types**: connect a type placeholder with a trait such that the trait method definitions can use these placeholder types in their signatures. So we can define a trait that uses some types without needing to know exactly what those types are until the trait is implemented
+    - One example of a trait with an associated type is the `Iterator` trait that the Standard library provides
+    - It seems similar to generics, but the difference is that when using generics, we need to annotate the types in each implementation; we can change the concrete types of the generic param each time. With associated types, we don't need to annotate types because we can't implement a trait on a type multiple times
+- **Default Generic Type Parameters and Operator Overloading**: we can specify a default concrete type for the generic type, so we don't have to specify a concrete type if the default works for us.
+    - Used for **Operator Overloading**: i nwhich you can customize the behaviour of an operator (such as `+`) in particular situations
+- **Fully Qualified Syntax for Disambiguation: Calling Methods with the Same Names**: when calling methods with the same name, you'll need to tell which one you want to use
+- **Using Supertraits to Require One Trait's Functionality within another trait**
 
 ## Other Useful Commands
 - Run doc for a project overview: `cargo doc --open --no-deps`
