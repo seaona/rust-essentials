@@ -962,7 +962,11 @@ pub fn notify <T: Summary + Display>(item: &T)
 - **Default Generic Type Parameters and Operator Overloading**: we can specify a default concrete type for the generic type, so we don't have to specify a concrete type if the default works for us.
     - Used for **Operator Overloading**: i nwhich you can customize the behaviour of an operator (such as `+`) in particular situations
 - **Fully Qualified Syntax for Disambiguation: Calling Methods with the Same Names**: when calling methods with the same name, you'll need to tell which one you want to use
-- **Using Supertraits to Require One Trait's Functionality within another trait**
+- **Using Supertraits to Require One Trait's Functionality within another trait**: sometimes you might write a trait definition that depends on another trait: for a type to implement the first trait, you want to require that type to also implement the second trait. The trait your trait definition is relying on is called a `supertrait`
+- **Using the Newtype Pattern to Implement External Traits on External Types**: using `newtype pattern` involves creating a new type in a tuple struct. It will have one field and be a thin wrapper around the type we want to implement a trait for
+
+#### 19.3 Advanced Types
+
 
 ## Other Useful Commands
 - Run doc for a project overview: `cargo doc --open --no-deps`
