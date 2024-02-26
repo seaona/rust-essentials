@@ -966,6 +966,34 @@ pub fn notify <T: Summary + Display>(item: &T)
 - **Using the Newtype Pattern to Implement External Traits on External Types**: using `newtype pattern` involves creating a new type in a tuple struct. It will have one field and be a thin wrapper around the type we want to implement a trait for
 
 #### 19.3 Advanced Types
+- **Newtype pattern for type safety an abstraction**:
+    - newtypes statically enforce that values are never confused and indicating the units of a value
+    - newtype pattern can also be used to abstract away some implementation details of a type: the new type can expose a public API that is different from the API of the private inner type
+    - newtypes can also hide internal implementation
+- **The Never Type that never returns**: there is a special type named `!` which has no values, it stands in the place of the return type when a function will never return
+    - in a match arm, we cannot return 2 different types Ok(int) Err(string), but `continue` has a `!` value, so when Rust computes teh type, it looks at both match arms, the formar with a value int and the latter witha value `!`, because `!` can never have a value, Rust decides that the type is int
+    - another useful case is with `match` and `panic`
+- **Dynamically Sized Types and the Sized Trait**: ie `str` we can't know how long the string is until runtime, meaning we can't create a variable of type `str` nor can we take an argument of type `str`
+    - `&str` they have an extra bit of metadata that store the size of the dynamic information. We must always put values of dynamically sized typed behind a pointer of some kind
+    - Rust provides the `Sized` trait to determine whether or not a type's size is known at compile time. It is implemented for everything whose size is known at compile time
+
+#### 19.4 Advanced Functions and Closures
+- You can pass regular functions to functions
+- Functions coerce to the type `fn`, function pointer. Passing functions with function pointers will allow you to use functions as arguments to other functions
+
+#### 19.5 Macros
+- Macros are a way of writing code that writes other code, which is known as metaprogramming. MAcros expand to produce more code than the code you've written manually
+- Macros can take a variable number of parameters: we can call `println!("hello")` with one argument or `println!("hello {}", name)` with two arguments
+- Macros are more difficult to read, undestand and maintain
+- You must define macros or bring them into scope before you call them in a file, as opposed to functions you can define anywhere and call anywhere
+- **Declarative Macros with macro_rules! for General Metaprogramming**:  to define a macro you use the `macro_rules!` construct
+- The `#[macro_export]` annotation indicates that this macro should be made available whenever the crate in which the macro is defined is brought into scope
+- **Procedural Macros for Generating Code from Attributes**: acts more like a function. It accept some code as an input, operate on that code and produce some code as an output rather than matching against patterns and replacing the code with other code as declarative macros do. Types
+    - custom derive
+    - attribute-like
+    - function-like
+- **Attribute-like macros**: instead of generating code for the derive attribute, they allow to create new attributes. Attributes can be applied to structs, enums, functions..
+- **Function-like macros**: take a TokenStream parameter and their definition manipulates that TokenStream using Rust code as the other two types of procedural macros do
 
 
 ## Other Useful Commands
