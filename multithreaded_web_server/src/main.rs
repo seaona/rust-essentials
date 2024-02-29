@@ -16,7 +16,7 @@ fn main() {
     let pool = ThreadPool::new(4);
 
     // we iterate over connection attemps
-    for stream in listener.incoming() {
+    for stream in listener.incoming().take(2) {
         // a single stream is an open connection between the client and the server
         let stream = stream.unwrap();
 
@@ -25,6 +25,8 @@ fn main() {
             handle_connection(stream);
         });
     }
+
+    println!("Shutting down.");
 }
 
 fn handle_connection(mut stream: TcpStream) {
